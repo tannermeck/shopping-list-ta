@@ -1,4 +1,5 @@
 import { useEffect, useReducer, useState } from 'react';
+import CartInfo from '../components/CartInfo';
 import { setItem, getItems } from '../utils/local';
 
 function shopReducer(state, action) {
@@ -8,18 +9,35 @@ function shopReducer(state, action) {
       setItem(newItem);
       return newItem;
     }
+    case 'edit': {
+      const editItem = state.map((item) => {
+        if (item.id === action.payload.id) {
+          return action.payload;
+        }
+        return item;
+      });
+      setItem(editItem);
+      return editItem;
+    }
   }
 }
 
 export default function ShoppingList() {
   let cart = getItems();
   let initialCart = [
-    { id: Date.now(), item: 'Apples', quantity: 4, price: 2.5 },
-    { id: +Date.now() + 1, item: 'Apples', quantity: 4, price: 5.5 },
+    { id: 1652397195827, item: 'Apples', quantity: 4, price: 2.5 },
+    { id: 1652397195828, item: 'Apples', quantity: 4, price: 5.5 },
   ];
+
   const [state, dispatch] = useReducer(shopReducer, initialCart);
   const [newItem, setNewItem] = useState({ item: '', price: '', quantity: '' });
   const [total, setTotal] = useState('');
+  const [edit, setEdit] = useState({ bool: false, id: null });
+  const [editItem, setEditItem] = useState({
+    item: '',
+    price: '',
+    quantity: '',
+  });
 
   useEffect(() => {
     let add = 0;
@@ -28,18 +46,33 @@ export default function ShoppingList() {
     }
     setTotal(add);
   }, [state]);
+  useEffect(() => {
+    setItem(initialCart);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch({ type: 'add', payload: { ...newItem } });
     setNewItem({ item: '', price: '', quantity: '' });
   };
+  const handleEdit = (item) => {
+    setEdit({ bool: true, id: item.id });
+    setEditItem({
+      item: item.item,
+      quantity: item.quantity,
+      price: item.price,
+    });
+    // console.log(item.id);
+  };
+  const handleSave = (editedItem) => {
+    dispatch({ type: 'edit', payload: { ...editedItem } });
+    setEdit({ bool: false, id: null });
+  };
 
   return (
     <>
       <h1>Shopping List:</h1>
       <form onSubmit={handleSubmit}>
-        {/* (dispatch({type: 'add', item:, quantity, price:} */}
         <label>Item:</label>
         <input
           placeholder="item"
@@ -65,9 +98,15 @@ export default function ShoppingList() {
       </form>
       <ul>
         {cart.map((item) => (
-          <li key={item.id}>
-            {item.item} {`(${item.quantity})`}
-          </li>
+          <CartInfo
+            key={item.id}
+            item={item}
+            handleEdit={handleEdit}
+            edit={edit}
+            editItem={editItem}
+            setEditItem={setEditItem}
+            handleSave={handleSave}
+          />
         ))}
       </ul>
       <p>______________</p>
