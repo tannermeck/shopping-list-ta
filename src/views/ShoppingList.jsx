@@ -1,25 +1,29 @@
 import { useEffect, useReducer, useState } from 'react';
+import { setItem, getItems } from '../utils/local';
 
 function shopReducer(state, action) {
   switch (action.type) {
     case 'add': {
-      return [...state, { ...action.payload, id: Date.now() }];
+      const newItem = [...state, { ...action.payload, id: Date.now() }];
+      setItem(newItem);
+      return newItem;
     }
   }
 }
 
 export default function ShoppingList() {
+  let cart = getItems();
   let initialCart = [
     { id: Date.now(), item: 'Apples', quantity: 4, price: 2.5 },
     { id: +Date.now() + 1, item: 'Apples', quantity: 4, price: 5.5 },
   ];
   const [state, dispatch] = useReducer(shopReducer, initialCart);
-  const [newItem, setNewItem] = useState({ item: '', price: 0, quantity: 0 });
+  const [newItem, setNewItem] = useState({ item: '', price: '', quantity: '' });
   const [total, setTotal] = useState('');
 
   useEffect(() => {
     let add = 0;
-    for (let item of state) {
+    for (let item of cart) {
       add = add + item.price;
     }
     setTotal(add);
@@ -28,7 +32,7 @@ export default function ShoppingList() {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch({ type: 'add', payload: { ...newItem } });
-    setNewItem({ item: '', price: 0, quantity: 0 });
+    setNewItem({ item: '', price: '', quantity: '' });
   };
 
   return (
@@ -53,13 +57,14 @@ export default function ShoppingList() {
         <input
           type="number"
           placeholder="$$$"
+          required
           value={newItem.price}
           onChange={(e) => setNewItem({ ...newItem, price: +e.target.value })}
         />
         <button type="submit">Add to Cart</button>
       </form>
       <ul>
-        {state.map((item) => (
+        {cart.map((item) => (
           <li key={item.id}>
             {item.item} {`(${item.quantity})`}
           </li>
