@@ -1,8 +1,9 @@
-import { useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 function shopReducer(state, action) {
   switch (action.type) {
     case 'add': {
+      return [...state, { ...action.payload, id: Date.now() }];
     }
   }
 }
@@ -14,17 +15,20 @@ export default function ShoppingList() {
   ];
   const [state, dispatch] = useReducer(shopReducer, initialCart);
   const [newItem, setNewItem] = useState({ item: '', price: 0, quantity: 0 });
+  const [total, setTotal] = useState('');
 
-  const total = () => {
+  useEffect(() => {
     let add = 0;
     for (let item of state) {
-      add += item.price;
+      add = add + item.price;
     }
-    return add;
-  };
+    setTotal(add);
+  }, [state]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(newItem);
+    dispatch({ type: 'add', payload: { ...newItem } });
+    setNewItem({ item: '', price: 0, quantity: 0 });
   };
 
   return (
@@ -50,17 +54,19 @@ export default function ShoppingList() {
           type="number"
           placeholder="$$$"
           value={newItem.price}
-          onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
+          onChange={(e) => setNewItem({ ...newItem, price: +e.target.value })}
         />
         <button type="submit">Add to Cart</button>
       </form>
       <ul>
         {state.map((item) => (
-          <li key={item.id}>{item.item}</li>
+          <li key={item.id}>
+            {item.item} {`(${item.quantity})`}
+          </li>
         ))}
       </ul>
       <p>______________</p>
-      <p>Total: ${total()}</p>
+      <p>Total: ${total}</p>
     </>
   );
 }
