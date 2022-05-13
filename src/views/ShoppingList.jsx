@@ -28,6 +28,7 @@ export default function ShoppingList() {
     { id: 1652397195827, item: 'Apples', quantity: 4, price: 2.5 },
     { id: 1652397195828, item: 'Apples', quantity: 4, price: 5.5 },
   ];
+  //   setItem(initialCart);
 
   const [state, dispatch] = useReducer(shopReducer, initialCart);
   const [newItem, setNewItem] = useState({ item: '', price: '', quantity: '' });
@@ -46,9 +47,10 @@ export default function ShoppingList() {
     }
     setTotal(add);
   }, [state]);
-  useEffect(() => {
-    setItem(initialCart);
-  }, []);
+
+  //   useEffect(() => {
+  //     setItem(initialCart);
+  //   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -97,7 +99,7 @@ export default function ShoppingList() {
         <button type="submit">Add to Cart</button>
       </form>
       <ul>
-        {cart.map((item) => (
+        {cart?.map((item) => (
           <CartInfo
             key={item.id}
             item={item}
