@@ -23,13 +23,8 @@ function shopReducer(state, action) {
 }
 
 export default function ShoppingList() {
-  let cart = getItems();
-  let initialCart = [
-    { id: 1652397195827, item: 'Apples', quantity: 4, price: 2.5 },
-    { id: 1652397195828, item: 'Apples', quantity: 4, price: 5.5 },
-  ];
-
-  const [state, dispatch] = useReducer(shopReducer, initialCart);
+  const cart = getItems();
+  const [state, dispatch] = useReducer(shopReducer, cart);
   const [newItem, setNewItem] = useState({ item: '', price: '', quantity: '' });
   const [total, setTotal] = useState('');
   const [editItem, setEditItem] = useState({
