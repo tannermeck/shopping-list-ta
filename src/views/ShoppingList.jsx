@@ -28,12 +28,10 @@ export default function ShoppingList() {
     { id: 1652397195827, item: 'Apples', quantity: 4, price: 2.5 },
     { id: 1652397195828, item: 'Apples', quantity: 4, price: 5.5 },
   ];
-  //   setItem(initialCart);
 
   const [state, dispatch] = useReducer(shopReducer, initialCart);
   const [newItem, setNewItem] = useState({ item: '', price: '', quantity: '' });
   const [total, setTotal] = useState('');
-  const [edit, setEdit] = useState({ bool: false, id: null });
   const [editItem, setEditItem] = useState({
     item: '',
     price: '',
@@ -48,27 +46,13 @@ export default function ShoppingList() {
     setTotal(add);
   }, [state]);
 
-  //   useEffect(() => {
-  //     setItem(initialCart);
-  //   }, []);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch({ type: 'add', payload: { ...newItem } });
     setNewItem({ item: '', price: '', quantity: '' });
   };
-  const handleEdit = (item) => {
-    setEdit({ bool: true, id: item.id });
-    setEditItem({
-      item: item.item,
-      quantity: item.quantity,
-      price: item.price,
-    });
-    // console.log(item.id);
-  };
   const handleSave = (editedItem) => {
     dispatch({ type: 'edit', payload: { ...editedItem } });
-    setEdit({ bool: false, id: null });
   };
 
   return (
@@ -103,8 +87,6 @@ export default function ShoppingList() {
           <CartInfo
             key={item.id}
             item={item}
-            handleEdit={handleEdit}
-            edit={edit}
             editItem={editItem}
             setEditItem={setEditItem}
             handleSave={handleSave}
