@@ -1,23 +1,15 @@
 import { useState } from 'react';
 
-export default function CartInfo({
-  item,
-  //   edit,
-  //   handleEdit,
-  editItem,
-  setEditItem,
-  handleSave,
-}) {
+export default function CartInfo({ item, editItem, setEditItem, handleSave }) {
   const [edit, setEdit] = useState(false);
   return (
     <>
-      {/* {edit.bool && item.id === edit.id ? ( */}
       {edit ? (
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            setEdit(false);
             handleSave(editItem);
+            setEdit(false);
           }}
         >
           <input
